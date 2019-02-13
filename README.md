@@ -27,3 +27,5 @@ sudo chmod 777 /data/grafana /data/prometheus
 ```
 
 명령을 이용해 도커 컴포즈로 배포하세요
+
+이후 설정은 [http://docs.grafana.org/] 를 참조하셔서 진행하시면 됩니다
