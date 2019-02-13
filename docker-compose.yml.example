@@ -1,0 +1,69 @@
+version: '3.4'
+
+services:
+  postgres:
+    image: postgres:11
+    volumes:
+      - './data/postgres:/var/lib/postgresql/data'
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: 'Objection-Brush-Tribe-Victory-6'
+      POSTGRES_USER: 'grafana'
+      POSTGRES_DB: 'grafana'
+  redis:
+    image: redis:4
+    restart: always
+    volumes:
+      - './data/redis:/redis'
+  bluehousegallery_metrics:
+    build:
+      context: ./prometheus-bluehousegallery
+    volumes:
+      - './prometheus-bluehousegallery/config.yml:/opt/bluehousegallery/config.yml:ro'
+    restart: always
+  prometheus:
+    image: prom/prometheus
+    #ports:
+    #  - target: 3006
+    #    published: 9090
+    #    protocol: tcp
+    #    mode: host
+    restart: always
+    volumes:
+      - './prometheus.yml:/etc/prometheus/prometheus.yml:ro'
+      - './data/prometheus:/prometheus'
+  grafana:
+    image: grafana/grafana
+    ports:
+      - target: 3000
+        published: 3006
+        protocol: tcp
+        mode: host
+    depends_on:
+      - postgres
+      - redis
+      - prometheus
+    restart: always
+    volumes:
+      - './data/grafana:/var/lib/grafana'
+    environment:
+      GF_SERVER_ROOT_URL: 'https://example.com/'
+      GF_SERVER_DOMAIN: 'example.com'
+      GF_ENFORCE_DOMAIN: 'true'
+      GF_DATABASE_TYPE: 'postgres'
+      GF_DATABASE_HOST: 'postgres:5432'
+      GF_DATABASE_NAME: 'grafana'
+      GF_DATABASE_USER: 'grafana'
+      GF_DATABASE_PASSWORD: 'Objection-Brush-Tribe-Victory-6'
+      GF_SECURITY_ADMIN_USER: 'admin'
+      GF_SECURITY_ADMIN_PASSWORD: 'CHANGEME'
+      GF_USERS_ALLOW_SIGN_UP: 'false'
+      GF_USERS_ALLOW_ORG_CREATE: 'false'
+      GF_SESSION_PROVIDER: 'redis'
+      GF_SESSION_PROVIDER_CONFIG: 'addr=redis:6379,pool_size=100,prefix=grafana'
+      #Uncomment below with HTTPS
+      GF_SESSION_COOKIE_SECURE: 'true'
+      GF_ANALYTTICS_REPORTING_ENABLED: 'false'
+      # Public viewport
+      GF_AUTH_ANONYMOUS_ENABLED: 'true'
+      #GF_INSTALL_PLUGINS: 'flant-statusmap-panel'

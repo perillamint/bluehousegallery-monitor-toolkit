@@ -1,0 +1,3 @@
+[submodule "prometheus-bluehousegallery"]
+	path = prometheus-bluehousegallery
+	url = https://github.com/perillamint/prometheus-bluehousegallery.git
